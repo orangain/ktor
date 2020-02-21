@@ -13,6 +13,7 @@ import io.ktor.routing.*
 import io.ktor.server.testing.*
 import org.junit.Test
 import java.math.*
+import java.util.*
 import kotlin.test.*
 
 @UseExperimental(KtorExperimentalLocationsAPI::class)
@@ -471,6 +472,22 @@ class LocationsTest {
 
         urlShouldBeHandled("/?bd=123456789012345678901234567890&bi=123456789012345678901234567890",
             "/?bd=123456789012345678901234567890&bi=123456789012345678901234567890")
+    }
+
+    @Location("/") class LocationWithUUID(val uuid: UUID)
+
+    @Test fun `location class with UUID`() = withLocationsApplication {
+        val uuid = UUID.fromString("9d9a1564-b32d-42df-aae4-a4d15c3a5351")
+
+        application.routing {
+            get<LocationWithUUID> { location ->
+                assertEquals(uuid, location.uuid)
+
+                call.respond(HttpStatusCode.OK)
+            }
+        }
+
+        urlShouldBeHandled("/?uuid=9d9a1564-b32d-42df-aae4-a4d15c3a5351")
     }
 
     @Test fun `location parameter mismatch should lead to bad request status`() = withLocationsApplication {

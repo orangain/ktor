@@ -10,6 +10,7 @@ import io.ktor.server.testing.*
 import io.ktor.util.*
 import org.junit.Test
 import java.math.*
+import java.util.*
 import kotlin.reflect.jvm.*
 import kotlin.test.*
 
@@ -40,6 +41,14 @@ class DataConversionTest {
         val v2 = application.conversionService.toValues(BigInteger(expected))
         assertEquals(expected, v2.single())
         assertEquals(BigInteger(expected), application.conversionService.fromValues(v2, BigInteger::class.java))
+    }
+
+    @Test
+    fun testUUID() = withTestApplication {
+        val expected = "9d9a1564-b32d-42df-aae4-a4d15c3a5351"
+        val v = application.conversionService.toValues(UUID.fromString(expected))
+        assertEquals(expected, v.single())
+        assertEquals(UUID.fromString(expected), application.conversionService.fromValues(v, UUID::class.java))
     }
 
     data class EntityID(val typeId: Int, val entityId: Int)
